@@ -1,0 +1,44 @@
+# ------------------------
+# Python / Flask Backend
+# ------------------------
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/*.db
+backend/*.sqlite3
+backend/instance/
+backend/uploads/
+backend/venv/
+
+# TensorFlow logs (but keep saved_model/)
+backend/checkpoint
+backend/events.out.tfevents.*
+
+# ------------------------
+# Node / React Frontend
+# ------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+*.log
+
+# Vite cache
+frontend/.cache/
+frontend/.vite/
+*.local
+
+# ------------------------
+# OS / Editor
+# ------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ------------------------
+# Environment & Secrets
+# ------------------------
+.env
+.env.local
+.env.*.local
