@@ -68,6 +68,9 @@ def predict():
     res = {"prediction": top_classes[0][0], "top_3": top_classes}
     return jsonify(res)
 
+@app.route("/")
+def home():
+    return "🌱 Plant disease detection API is running!"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
