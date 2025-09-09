@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import tensorflow as tf
+from keras.layers import TFSMLayer
 from PIL import Image
 import numpy as np
 import os
@@ -8,9 +8,9 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Load model
+# Load model using TFSMLayer (for SavedModel format)
 MODEL_PATH = "saved_model"
-model = tf.keras.models.load_model(MODEL_PATH)
+model = TFSMLayer(MODEL_PATH, call_endpoint="serving_default")
 
 CLASS_NAMES = [
     "Healthy",
@@ -31,8 +31,14 @@ def preprocess_image(img_path):
     img = Image.open(img_path).convert("RGB")
     img = img.resize((224, 224))
     img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
     return img_array
+
+def predict_image(img_array):
+    # Run inference (TFSMLayer returns a dict of tensors)
+    outputs = model(img_array)
+    predictions = list(outputs.values())[0].numpy()
+    return predictions
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -47,12 +53,12 @@ def predict():
     img_array = preprocess_image(file_path)
     
     # Predict
-    predictions = model.predict(img_array)  # Already a NumPy array
+    predictions = predict_image(img_array)
     class_index = np.argmax(predictions[0])
     class_name = CLASS_NAMES[class_index]
     
     # Get top 3 predictions
-    scores = predictions[0]  # directly use it
+    scores = predictions[0]
     top_indices = np.argsort(scores)[-3:][::-1]
     top_classes = [(CLASS_NAMES[i], float(scores[i])) for i in top_indices]
 
