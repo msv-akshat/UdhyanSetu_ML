@@ -2,23 +2,29 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 import numpy as np
+import tensorflow as tf
 import os
 
 app = Flask(__name__)
 CORS(app)
 
-MODEL_PATH = "saved_model"
+MODEL_PATH = "model.tflite"
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Lazy-load model
-model = None
-def get_model():
-    global model
-    if model is None:
-        from keras.layers import TFSMLayer
-        model = TFSMLayer(MODEL_PATH, call_endpoint="serving_default")
-    return model
+# Lazy-load TFLite interpreter
+interpreter = None
+input_details = None
+output_details = None
+
+def get_interpreter():
+    global interpreter, input_details, output_details
+    if interpreter is None:
+        interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+        interpreter.allocate_tensors()
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
+    return interpreter, input_details, output_details
 
 CLASS_NAMES = [
     "Healthy",
@@ -40,10 +46,11 @@ def preprocess_image(img_path):
     return img_array
 
 def predict_image(img_array):
-    model_instance = get_model()
-    outputs = model_instance(img_array)
-    predictions = list(outputs.values())[0].numpy()
-    return predictions
+    interpreter, input_details, output_details = get_interpreter()
+    interpreter.set_tensor(input_details[0]['index'], img_array)
+    interpreter.invoke()
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    return output_data
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -75,6 +82,5 @@ def health():
     return "OK", 200
 
 if __name__ == "__main__":
-    # Local development only
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
