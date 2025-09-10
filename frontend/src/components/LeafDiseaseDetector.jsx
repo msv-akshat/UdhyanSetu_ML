@@ -3,7 +3,8 @@ import { Container, Row, Col, Card, Button, Form, Spinner, Badge, ProgressBar } 
 import { CloudArrowUpFill, ArrowRight, XCircleFill, CheckCircleFill } from 'react-bootstrap-icons';
 import './style.css';
 
-const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 
 const CLASS_NAMES = [
   "Healthy",
