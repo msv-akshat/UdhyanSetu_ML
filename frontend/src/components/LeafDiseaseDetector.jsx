@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, Button, Form, Spinner, Badge, ProgressBar } 
 import { CloudArrowUpFill, ArrowRight, XCircleFill, CheckCircleFill } from 'react-bootstrap-icons';
 import './style.css';
 
+const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+
 const CLASS_NAMES = [
   "Healthy",
   "Bacterial Leaf Spot",
@@ -60,7 +62,7 @@ const LeafDiseaseDetector = () => {
     setTop3([]);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/predict", {
+      const res = await fetch(`${API_URL}/predict`, {
         method: "POST",
         body: formData,
       });
