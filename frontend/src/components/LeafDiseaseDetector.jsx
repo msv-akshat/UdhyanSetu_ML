@@ -5,7 +5,6 @@ import './style.css';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-
 const CLASS_NAMES = [
   "Healthy",
   "Bacterial Leaf Spot",
@@ -158,11 +157,6 @@ const LeafDiseaseDetector = () => {
           {prediction && (
             <div className="prediction-results mt-5 p-4 rounded shadow-sm">
               <div className="d-flex align-items-center mb-3">
-                {prediction === "Healthy" ? (
-                  <CheckCircleFill size={25} className="text-success me-2" />
-                ) : (
-                  <XCircleFill size={25} className="text-danger me-2" />
-                )}
                 <h4 className="mb-0 text-primary">Prediction: <span className="text-secondary">{prediction}</span></h4>
               </div>
 
