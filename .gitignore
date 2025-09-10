@@ -10,6 +10,7 @@ backend/*.sqlite3
 backend/instance/
 backend/uploads/
 backend/venv/
+backend/notebooks/
 
 # TensorFlow logs (but keep saved_model/)
 backend/checkpoint
